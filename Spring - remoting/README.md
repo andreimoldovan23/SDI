@@ -1,4 +1,4 @@
 -a client server approach\
 -uses spring RMI features\
--data persistence is achieved with spring jdbc
+-data persistence is achieved with spring jdbc\
 -client is non blocking, console based
