@@ -1,4 +1,4 @@
 -a client server approach\
 -mimics RMI using sockets\
 -data persistence is achieved with jdbc\
--client is console based
+-client is non blocking, console based
