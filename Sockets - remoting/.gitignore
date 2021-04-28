@@ -1,0 +1,15 @@
+target
+classes
+bin
+*.log
+dist
+node_modules
+*.iml
+*.ipr
+*.iws
+.idea
+.gradle
+build
+out
+MANIFEST.MF
+/.gradle/

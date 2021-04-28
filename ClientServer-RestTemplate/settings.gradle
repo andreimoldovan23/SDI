@@ -1,0 +1,5 @@
+rootProject.name = 'ClientServer-RestTemplate'
+include 'Core'
+include 'Server'
+include 'Client'
+

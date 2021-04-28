@@ -1,0 +1,85 @@
+package domain.Validators;
+
+import domain.Coffee;
+
+import java.util.Optional;
+import java.util.regex.Pattern;
+
+public class CoffeeValidator implements Validator<Integer, Coffee> {
+
+    /**
+     * Constructor for CoffeeValidator. Performs different checks
+     * @param entity: the client to be verified
+     * @throws CoffeeValidatorException
+     *          in case of null objects/fields or invalid data
+     */
+    @Override
+    public void validate(Coffee entity) throws CoffeeValidatorException {
+        checkNull(entity, "Object is null");
+        checkNull(entity.getId(), "Id is null");
+        checkNull(entity.getName(), "Name is null");
+        checkNull(entity.getOrigin(), "Origin is null");
+
+        checkId(entity.getId(), "Invalid id");
+        checkNumberField(entity.getQuantity(), "Quantity cannot be lower than 0");
+        checkNumberField(entity.getPrice(), "Price cannot be lower than 0");
+
+        validateStringPattern(entity.getName(), "[a-zA-Z]+", "Name should contain only letters");
+        validateStringPattern(entity.getOrigin(), "[a-zA-Z]+", "Origin should contain only letters");
+    }
+
+    @Override
+    public void checkId(Integer id, String message) throws CoffeeValidatorException {
+        Optional.of(id).filter(e -> e > 0).orElseThrow(() -> {
+            throw new CoffeeValidatorException(message);
+        });
+    }
+
+    /**
+     * Overrides its parent method. Checks quantity and price to see if after reading from the xml they should be null or not
+     * @param entity: the coffee entity to be checked and updated
+     * @return Coffee: the checked and updated coffee entity
+     */
+    @Override
+    public Coffee verifyNullableFields(Coffee entity) {
+        Integer quantity = entity.getQuantity();
+        Integer price = entity.getPrice();
+        entity.setQuantity(quantity == 0 ? null : quantity);
+        entity.setPrice(price == 0 ? null : price);
+        return entity;
+    }
+
+    @Override
+    public void checkNull(Object obj, String message) throws CoffeeValidatorException {
+        Optional.ofNullable(obj).orElseThrow(() -> {
+            throw new CoffeeValidatorException(message);
+        });
+    }
+
+    /**
+     *
+     * @param string the string that needs to be checked
+     * @param characters the pattern used in checking the string
+     * @param message the exception message
+     * @throws CoffeeValidatorException if the string does not match the pattern
+     */
+    private void validateStringPattern(String string, String characters, String message) throws ClientValidatorException {
+        Optional.ofNullable(string).ifPresent(val -> Optional.of(val).filter(s -> Pattern.matches(characters, s))
+                .orElseThrow( () -> {
+                    throw new CoffeeValidatorException(message);
+                }));
+    }
+
+    /**
+     *
+     * @param number The number that will be checked.
+     * @param message The exception message.
+     * @throws CoffeeValidatorException If the number is negative.
+     */
+    private void checkNumberField(Integer number, String message) throws CoffeeValidatorException {
+        Optional.ofNullable(number).ifPresent(value -> Optional.of(value).filter(n -> n > 0).orElseThrow(() -> {
+            throw new CoffeeValidatorException(message);
+        }));
+    }
+
+}

@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':common')
+}
+
+test {
+    environment 'TESTDB', "E:\\Projects\\Faculta\\SDI\\Project\\lab5x-the-crooked-raven\\Sockets - remoting\\data\\database\\testDB.db"
+}

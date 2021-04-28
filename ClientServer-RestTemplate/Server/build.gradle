@@ -1,0 +1,14 @@
+apply plugin: 'war'
+
+dependencies {
+    implementation project(':Core')
+
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: "5.0.3.RELEASE"
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "2.9.4"
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "2.9.4"
+
+    implementation group: 'javax.servlet', name: 'javax.servlet-api', version:"4.0.1"
+
+    implementation group: 'org.springframework', name: 'spring-tx', version: '5.3.6'
+}
