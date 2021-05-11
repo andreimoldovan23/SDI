@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Coffees ordered by client
+    <div>
+        <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+    </div>
+</h1>
+<div mat-dialog-content>
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-cell *matCellDef="let coffee"> {{coffee.name}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="origin">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Origin </mat-header-cell>
+      <mat-cell *matCellDef="let coffee"> {{coffee.origin}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Price </mat-header-cell>
+      <mat-cell *matCellDef="let coffee"> {{coffee.price}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="quantity">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Quantity </mat-header-cell>
+        <mat-cell *matCellDef="let coffee"> {{coffee.quantity}} </mat-cell>
+      </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="[5, 10]"></mat-paginator>
+</div>

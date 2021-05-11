@@ -1,0 +1,8 @@
+package services.interfaces;
+
+import domain.Address;
+
+public interface IAddressService extends ICrudService<Integer, Address> {
+    void deleteAddressWithNumber(Integer number);
+    Integer howManyClientsLiveHere(Integer id);
+}

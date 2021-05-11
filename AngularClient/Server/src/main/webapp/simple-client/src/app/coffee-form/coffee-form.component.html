@@ -1,0 +1,46 @@
+<div *ngIf="selectedCoffee">
+    <h1>Coffee Form</h1>
+    <form (ngSubmit)="onSubmit()" #coffeeForm="ngForm">
+      <div class="form-group">
+        <label for="name">Name: </label>
+        <input type="text" class="form-control" id="name"
+               required
+               [(ngModel)]="selectedCoffee.name" name="name"
+               #name="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!name.errors?.pattern && !name.errors?.required"
+             class="alert alert-danger">
+          Invalid name
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="origin">Origin: </label>
+        <input type="text" class="form-control" id="origin"
+               required
+               [(ngModel)]="selectedCoffee.origin" name="origin"
+               #origin="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!origin.errors?.pattern && !origin.errors?.required"
+             class="alert alert-danger">
+          Invalid origin
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price: </label>
+        <input type="number" class="form-control" id="price"
+               [(ngModel)]="selectedCoffee.price" name="price" #price="ngModel">
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Quantity: </label>
+        <input type="number" class="form-control" id="quantity"
+               [(ngModel)]="selectedCoffee.quantity" name="quantity" #quantity="ngModel">
+      </div>
+
+      <button type="submit" class="btn btn-success m-2 p-2" [disabled]="!coffeeForm.form.valid">Submit</button>
+      <button type="button" class="btn btn-success m-2 p-2" [disabled]="!coffeeForm.form.valid" 
+        (click)="update()">Update</button>
+    </form>
+  </div>

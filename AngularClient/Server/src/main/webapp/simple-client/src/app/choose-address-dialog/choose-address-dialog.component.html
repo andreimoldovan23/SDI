@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>Addresses
+    <div>
+        <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+    </div>
+</h1>
+<div mat-dialog-content>
+  <p>Choose address for client</p>
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? toggleRow(row) : null"
+                        [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="city">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> City </mat-header-cell>
+      <mat-cell *matCellDef="let address"> {{address.city}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="street">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Street </mat-header-cell>
+      <mat-cell *matCellDef="let address"> {{address.street}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="number">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
+      <mat-cell *matCellDef="let address"> {{address.number}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleRow(row)"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="[5, 10]"></mat-paginator>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" class="btn btn-info m-2 p-2">No Thanks</button>
+  <button mat-button [mat-dialog-close]="selectedAddress" cdkFocusInitial class="btn btn-info m-2 p-2">Save</button>
+</div>

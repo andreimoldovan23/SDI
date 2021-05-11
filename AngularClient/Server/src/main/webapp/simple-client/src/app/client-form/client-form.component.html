@@ -1,0 +1,62 @@
+<div *ngIf="selectedClient">
+    <h1>Client Form</h1>
+    <form (ngSubmit)="onSubmit()" #clientForm="ngForm">
+      <div class="form-group">
+        <label for="firstName">First name: </label>
+        <input type="text" class="form-control" id="firstName"
+               required
+               [(ngModel)]="selectedClient.firstName" name="firstName"
+               #firstName="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!firstName.errors?.pattern && !firstName.errors?.required"
+             class="alert alert-danger">
+          Invalid first name
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last name: </label>
+        <input type="text" class="form-control" id="lastName"
+               required
+               [(ngModel)]="selectedClient.lastName" name="lastName"
+               #lastName="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!lastName.errors?.pattern && !lastName.errors?.required"
+             class="alert alert-danger">
+          Invalid last name
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age: </label>
+        <input type="number" class="form-control" id="age"
+               [(ngModel)]="selectedClient.age" name="age" #age="ngModel">
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Phone number: </label>
+        <input type="text" class="form-control" id="phoneNumber"
+               [(ngModel)]="selectedClient.phoneNumber" name="phoneNumber" #phoneNumber="ngModel" pattern="[0-9]{10}">
+        <div [hidden]="!phoneNumber.errors?.pattern" class="alert alert-danger">
+            Invalid phone number
+        </div>
+      </div>
+
+      <div>City: {{selectedClient.address.city}}</div>
+      <div>Street: {{selectedClient.address.street}}</div>
+      <div>Number: {{selectedClient.address.number}}</div>
+
+      <button type="submit" class="btn btn-success m-2 p-2" [disabled]="!clientForm.form.valid">Submit</button>
+      <button type="button" class="btn btn-success m-2 p-2" [disabled]="!clientForm.form.valid" 
+        (click)="update()">Update</button>
+      <button type="button" class="btn btn-info" [disabled]="!clientForm.form.valid"
+            (click)="openDialog()">
+            Choose address
+      </button>
+    </form>
+
+    <div>
+      <button type="button" class="btn btn-primary" (click)="checkClientCoffees()">My coffees</button>
+      <button type="button" class="btn btn-primary" (click)="checkClientOrders()">My orders</button>
+    </div>
+  </div>

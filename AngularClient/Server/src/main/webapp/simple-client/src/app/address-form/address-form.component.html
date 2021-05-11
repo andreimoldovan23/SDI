@@ -1,0 +1,48 @@
+<div>
+    <h1>Address Form</h1>
+    <form (ngSubmit)="onSubmit()" #addressForm="ngForm">
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city"
+               required
+               [(ngModel)]="selectedAddress.city" name="city"
+               #city="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!city.errors?.pattern && !city.errors?.required"
+             class="alert alert-danger">
+          Invalid city
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="street">Street</label>
+        <input type="text" class="form-control" id="street"
+               required
+               [(ngModel)]="selectedAddress.street" name="street"
+               #street="ngModel"
+               pattern="[a-zA-Z]{3,}">
+        <div [hidden]="!street.errors?.pattern && !street.errors?.required"
+             class="alert alert-danger">
+          Invalid street
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="number">Number</label>
+        <input type="number" class="form-control" id="number"
+               required
+               [(ngModel)]="selectedAddress.number" name="number"
+               #number="ngModel">
+        <div [hidden]="!number.errors?.required"
+             class="alert alert-danger">
+          Invalid number
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success m-2 p-2" [disabled]="!addressForm.form.valid">Submit</button>
+      <button type="button" class="btn btn-success m-2 p-2" [disabled]="!addressForm.form.valid" 
+        (click)="update()">Update</button>
+      <button type="button" class="btn btn-danger m-2 p-2" (click)="deleteByNumber()"
+        [disabled]="number.errors?.pattern || number.errors?.required">Delete all with number</button>
+    </form>
+  </div>

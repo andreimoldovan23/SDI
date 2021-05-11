@@ -1,0 +1,27 @@
+<div class="d-flex flex-row text-monospace">
+    <div class="w-50 h-75 m-2 p-2">
+        <div class="d-flex flex-row">
+            <h2>Addresses</h2>
+            <h2 class="badge badge-primary float-right" *ngIf="selectedAddress" (click)="trivia()" clickable>?</h2>
+        </div>
+        <ul class="list-group" *ngIf="addresses.length">
+            <li class="list-group-item flex-column align-items-start border-danger"
+                [class.selected]="address == selectedAddress"
+                *ngFor="let address of addresses"
+                (click)="select(address)">
+                <a>{{address.city}}</a>
+                <span class="text-white">{{address.street}}</span>
+                <span class="text-white">{{address.number}}</span>
+                <button class="btn float-right" (click)="delete(address)">X</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="w-50 h-50 m-2 p-2" *ngIf="selectedAddress">
+        <app-address-form [selectedAddress]="cloneSelectedAddress"
+            (updateEventEmitter)="update($event)"
+            (addEventEmitter)="add($event)"
+            (deleteByNumberEventEmitter)="deleteByNumber($event)">
+        </app-address-form>
+    </div>
+</div>

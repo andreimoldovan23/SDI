@@ -1,0 +1,4 @@
+rootProject.name = 'AngularFeatures'
+include 'Core'
+include 'Server'
+

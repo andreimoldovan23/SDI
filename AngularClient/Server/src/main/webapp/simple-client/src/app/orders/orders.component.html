@@ -1,0 +1,26 @@
+<div class="d-flex flex-row text-monospace">
+    <div class="w-50 h-75 m-2 p-2">
+        <h2>Orders</h2>
+        <ul class="list-group" *ngIf="orders.length">
+            <li class="list-group-item flex-column align-items-start border-danger"
+                [class.selected]="order == selectedOrder"
+                *ngFor="let order of orders"
+                (click)="select(order)">
+                <a>
+                    <span>{{order.client.firstName}}</span>
+                    <span>{{order.client.lastName}}</span>
+                    <span>{{order.coffee.name}}</span>
+                    <span>{{order.coffee.origin}}</span>
+                </a>
+                <span class="text-white">{{order.status}}</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
+        <app-order-form [selectedOrder]="cloneSelectedOrder"
+        (statusEventEmitter)="changeStatus($event)"
+        (buyEventEmitter)="buy($event)"
+        (deleteDatesEventEmitter)="deleteBetweenDates($event)"></app-order-form>
+    </div>
+</div>

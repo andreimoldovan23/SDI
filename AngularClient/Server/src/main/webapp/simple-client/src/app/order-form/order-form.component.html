@@ -1,0 +1,33 @@
+<div *ngIf="selectedOrder" class="d-flex flex-column m-2 p-2 text-monospace">
+    <h1>Order Form</h1>
+    <h4>Client name: {{selectedOrder.client.firstName}} {{selectedOrder.client.lastName}}</h4>
+    <h4>Coffee: {{selectedOrder.coffee.name}} from {{selectedOrder.coffee.origin}}</h4>
+    <h4>Time: {{selectedOrder.time}}</h4>
+
+    <div>
+        <label for="status">Status: </label>
+        <select name="status" id="status" [(ngModel)]="selectedOrder.status">
+            <option value="canceled">Canceled</option>
+            <option value="outOfStock">Out of stock</option>
+            <option value="pending">Pending</option>
+            <option value="delivered">Delivered</option>
+        </select>
+        <button type="button" class="btn btn-success m-2 p-2" (click)="changeStatus()">Change status</button>
+    </div>
+
+    <div>
+        <label for="date1" title="Date format: yyyy-MM-dd//HH::mm::ss">Date: </label>
+        <input #date1 name="date1" id="date1" type="text"
+            class="m-2 p-2">
+
+        <label for="date2" title="Date format: yyyy-MM-dd//HH::mm::ss">Date: </label>
+        <input #date2 name="date2" id="date2" type="text"
+            class="m-2 p-2">
+
+        <button type="button" class="btn btn-danger w-25" (click)="deleteBetweenDates(date1.value, date2.value)">Delete orders between timestamps</button>
+    </div>
+
+    <button type="button" class="btn btn-primary m-2 p-2 w-25" (click)="openClientDialog()">Choose client</button>
+    <button type="button" class="btn btn-primary m-2 p-2 w-25" (click)="openCoffeeDialog()">Choose coffee</button>
+    <button type="button" class="btn btn-success m-2 p-2 w-25" (click)="buy()">Buy coffee</button>
+</div>

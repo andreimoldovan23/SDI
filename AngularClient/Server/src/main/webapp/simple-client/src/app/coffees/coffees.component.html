@@ -1,0 +1,32 @@
+<div class="d-flex flex-row text-monospace">
+    <div class="w-50 h-75 m-2 p-2">
+        <div class="d-flex flex-row">
+            <h2>Coffees</h2>
+            <h2 class="badge badge-primary float-right" *ngIf="selectedCoffee" (click)="trivia()" clickable>?</h2>
+        </div>
+        <ul class="list-group" *ngIf="coffees.length">
+            <li class="list-group-item flex-column align-items-start border-danger"
+                [class.selected]="coffee == selectedCoffee"
+                *ngFor="let coffee of coffees"
+                (click)="select(coffee)">
+                <a>
+                    <span>{{coffee.name}}</span>
+                    <span>{{coffee.origin}}</span>
+                </a>
+                <span class="text-white">{{coffee.price}}</span>
+                <span class="text-white">{{coffee.quantity}}</span>
+                <button class="btn float-right" (click)="delete(coffee)">X</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
+        <app-coffee-form [selectedCoffee]="cloneSelectedCoffee"
+        (updateEventEmitter)="update($event)"
+        (addEventEmitter)="add($event)"></app-coffee-form>
+
+        <app-coffee-filter (nameEventEmitter)="filterCoffeesByName($event)"
+            (originEventEmitter)="filterCoffeesByOrigin($event)"
+            (resetEventEmitter)="removeFilters()"></app-coffee-filter>
+    </div>
+</div>

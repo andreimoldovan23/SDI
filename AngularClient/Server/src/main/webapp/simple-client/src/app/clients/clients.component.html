@@ -1,0 +1,32 @@
+<div class="d-flex flex-row text-monospace">
+    <div class="w-50 h-75 m-2 p-2">
+        <div class="d-flex flex-row">
+            <h2>Clients</h2>
+            <h2 class="badge badge-primary float-right" *ngIf="selectedClient" (click)="trivia()" clickable>?</h2>
+        </div>
+        <ul class="list-group" *ngIf="clients.length">
+            <li class="list-group-item flex-column align-items-start border-danger"
+                [class.selected]="client == selectedClient"
+                *ngFor="let client of clients"
+                (click)="select(client)">
+                <a>
+                    <span>{{client.firstName}}</span>
+                    <span>{{client.lastName}}</span>
+                </a>
+                <span class="text-white">{{client.age}}</span>
+                <span class="text-white">{{client.phoneNumber}}</span>
+                <button class="btn float-right" (click)="delete(client)">X</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
+        <app-client-form [selectedClient]="cloneSelectedClient"
+        (updateEventEmitter)="update($event)"
+        (addEventEmitter)="add($event)"></app-client-form>
+
+        <app-client-filter (nameEventEmitter)="filterClientsByName($event)"
+            (ageEventEmitter)="filterClientsByAge($event)"
+            (resetEventEmitter)="removeFilters()"></app-client-filter>
+    </div>
+</div>
