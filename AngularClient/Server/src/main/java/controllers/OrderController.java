@@ -33,11 +33,6 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public ShopOrderDTO getOne(@PathVariable Integer id) {
-        return shopOrderMapper.shopOrderToDTO(orderService.findOne(id));
-    }
-
     @GetMapping("/filterClientOrders")
     public List<ShopOrderDTO> filterClientOrders(@RequestParam(name = "id") Integer id) {
         return orderService.filterClientOrders(id).stream().map(shopOrderMapper::shopOrderToDTO)

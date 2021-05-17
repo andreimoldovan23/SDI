@@ -8,12 +8,18 @@ import { Coffee } from '../interfaces/coffee';
 })
 export class CoffeeFormComponent implements OnInit {
   @Input() selectedCoffee : Coffee;
+  initialCoffee : Coffee;
+
   @Output() updateEventEmitter = new EventEmitter<Coffee>();
   @Output() addEventEmitter = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges() : void {
+    this.initialCoffee = JSON.parse(JSON.stringify(this.selectedCoffee));
   }
 
   onSubmit() : void {
@@ -23,6 +29,10 @@ export class CoffeeFormComponent implements OnInit {
 
   update() : void {
     this.updateEventEmitter.emit(this.selectedCoffee);
+  }
+
+  isPristine() : boolean {
+    return this.initialCoffee.name === this.selectedCoffee.name && this.initialCoffee.origin === this.selectedCoffee.origin;
   }
 
 }

@@ -22,15 +22,17 @@ public class ClientValidator implements Validator<Integer, Client> {
         checkNull(client.getFirstName(), "First name is null");
         checkNull(client.getLastName(), "Last name is null");
         checkNull(client.getAddress(), "Address is null");
+
+        validateStringLength(client.getFirstName(), 1, "Invalid First Name");
+        validateStringLength(client.getLastName(), 1, "Invalid Last Name");
+
+        validateStringPattern(client.getFirstName(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "First Name should contain only letters");
+        validateStringPattern(client.getLastName(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Last Name should contain only letters");
+
         validateAge(client.getAge(), "Invalid age");
-
-        validateStringLength(client.getFirstName(), 3, "Invalid First Name");
-        validateStringLength(client.getLastName(), 3, "Invalid Last Name");
         validateStringLength(client.getPhoneNumber(), 9, "Invalid phone number");
-
-        validateStringPattern(client.getFirstName(), "[a-zA-Z]+", "First Name should contain only letters");
-        validateStringPattern(client.getLastName(), "[a-zA-Z]+", "Last Name should contain only letters");
-        validateStringPattern(client.getPhoneNumber(), "[0-9]+", "Phone Number should contain only digits");
+        validateStringPattern(client.getPhoneNumber(), "^0[1-9]{1}[0-9]+$",
+                    "Phone Number should contain only digits");
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import repositories.AddressDbRepository;
 import repositories.ClientDbRepository;
@@ -48,23 +47,23 @@ public class ClientServiceTest {
                 .firstName("John")
                 .lastName("Jackson")
                 .address(address)
-                .age(40)
                 .build();
         c2 = Client.builder()
                 .firstName("Abdul")
                 .lastName("Johnson")
                 .address(address)
-                .age(20)
                 .build();
         c3 = Client.builder()
                 .firstName("Mike")
                 .lastName("Jack")
                 .address(address)
                 .build();
+        c1.setAge(40);
+        c2.setAge(20);
 
-        clientDBRepo.save(c1);
-        clientDBRepo.save(c2);
-        clientDBRepo.save(c3);
+        service.Add(c1);
+        service.Add(c2);
+        service.Add(c3);
 
         List<Client> clients = clientDBRepo.findAll();
         c1 = clients.get(0);
@@ -114,27 +113,103 @@ public class ClientServiceTest {
 
     @Test
     public void getOneBadTest() {
-        assertThrows(ValidatorException.class, () -> service.findOne(200));
+        assertThrows(ValidatorException.class, () -> service.findOne(1000));
     }
 
     @Test
     public void deleteTest() {
-        assertThrows(DataAccessException.class, () -> service.Delete(200));
-        assertEquals(service.getAll().size(), 3);
-
         service.Delete(c1.getId());
         assertEquals(service.getAll().size(), 2);
     }
 
     @Test
+    public void deleteBadIdTest() {
+        assertThrows(ValidatorException.class, () -> service.Delete(1000));
+        assertEquals(service.getAll().size(), 3);
+    }
+
+    @Test
     public void updateTest() {
         c1.setAge(45);
-
         service.Update(c1);
         assertEquals(service.findOne(c1.getId()).getAge(), 45);
+    }
 
-        c1.setId(200);
+    @Test
+    public void updateBadIdTest() {
+        c1.setId(1000);
         assertThrows(ValidatorException.class, () -> service.Update(c1));
+    }
+
+    @Test
+    public void updateNotValidTest() {
+        c1.setFirstName("Mick ?Rory");
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setFirstName("Mick Rory");
+        c1.setAge(12);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setAge(102);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setAge(34);
+        c1.setPhoneNumber("00231231131");
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setPhoneNumber("0756823468");
+        c1.getAddress().setNumber(-3);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.getAddress().setNumber(3);
+        c1.getAddress().setId(1000);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+    }
+
+    @Test
+    public void updateNewAddressTest() {
+        Address address2 = Address.builder()
+                .city("Los Angeles")
+                .street("Casino")
+                .number(100)
+                .build();
+        address2 = addressDBRepo.save(address2);
+
+        c1.setAddress(address2);
+        service.Update(c1);
+        assertEquals(service.findOne(c1.getId()).getAddress(), address2);
+    }
+
+    @Test
+    public void addAlreadyExistentTest() {
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+    }
+
+    @Test
+    public void addNotValidTest() {
+        c1.setId(null);
+
+        c1.setFirstName("Mick ?Rory");
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setFirstName("Mick Rory");
+        c1.setAge(12);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setAge(102);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setAge(34);
+        c1.setPhoneNumber("00231231131");
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setPhoneNumber("0756823468");
+        c1.getAddress().setNumber(-3);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.getAddress().setNumber(3);
+        c1.getAddress().setId(1000);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
     }
 
 }

@@ -49,8 +49,6 @@ public class AbstractMapperTest {
     protected static final Client client = Client.builder()
             .firstName(clientFirstName)
             .lastName(clientLastName)
-            .age(clientAge)
-            .phoneNumber(clientPhoneNumber)
             .address(address)
             .build();
 

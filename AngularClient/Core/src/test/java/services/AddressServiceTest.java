@@ -9,31 +9,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import repositories.AddressDbRepository;
-import repositories.ClientDbRepository;
 import services.interfaces.IAddressService;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ContextConfiguration(classes = JpaConfig.class)
 public class AddressServiceTest {
 
-    Address a1, a2, a3;
+    private Address a1, a2, a3;
 
     @Autowired
-    AddressDbRepository addressDbRepository;
+    private AddressDbRepository addressDbRepository;
 
     @Autowired
-    ClientDbRepository clientDbRepository;
-
-    @Autowired
-    IAddressService service;
+    private IAddressService service;
 
     @BeforeEach
     public void setUp() {
@@ -93,27 +89,65 @@ public class AddressServiceTest {
 
     @Test
     public void getOneBadTest() {
-        assertThrows(ValidatorException.class, () -> service.findOne(200));
+        assertThrows(ValidatorException.class, () -> service.findOne(1000));
     }
 
     @Test
     public void deleteTest() {
-        assertThrows(DataAccessException.class, () -> service.Delete(200));
-        assertEquals(service.getAll().size(), 3);
-
         service.Delete(a1.getId());
         assertEquals(service.getAll().size(), 2);
     }
 
     @Test
+    public void deleteBadIdTest() {
+        assertThrows(ValidatorException.class, () -> service.Delete(1000));
+        assertEquals(service.getAll().size(), 3);
+    }
+
+    @Test
     public void updateTest() {
         a1.setNumber(45);
-
         service.Update(a1);
         assertEquals(service.findOne(a1.getId()).getNumber(), 45);
+    }
 
+    @Test
+    public void updateBadIdTest() {
         a1.setId(200);
         assertThrows(ValidatorException.class, () -> service.Update(a1));
+    }
+
+    @Test
+    public void updateNotValidTest() {
+        a1.setCity(null);
+        assertThrows(ValidatorException.class, () -> service.Update(a1));
+
+        a1.setCity("Los- Mandingas");
+        assertThrows(ValidatorException.class, () -> service.Update(a1));
+
+        a1.setCity("Los Mandingas");
+        a1.setNumber(-3);
+        assertThrows(ValidatorException.class, () -> service.Update(a1));
+    }
+
+    @Test
+    public void addAlreadyExistentTest() {
+        assertThrows(ValidatorException.class, () -> service.Add(a1));
+    }
+
+    @Test
+    public void addInvalidTest() {
+        a1.setId(null);
+
+        a1.setCity(null);
+        assertThrows(ValidatorException.class, () -> service.Add(a1));
+
+        a1.setCity("Los- Mandingas");
+        assertThrows(ValidatorException.class, () -> service.Add(a1));
+
+        a1.setCity("Los Mandingas");
+        a1.setNumber(-3);
+        assertThrows(ValidatorException.class, () -> service.Add(a1));
     }
 
     @Test
@@ -136,18 +170,16 @@ public class AddressServiceTest {
                 .address(a1)
                 .build();
 
-        clientDbRepository.save(c1);
-        clientDbRepository.save(c2);
-        clientDbRepository.save(c3);
+        a1.getClients().add(c1);
+        a1.getClients().add(c3);
+        a2.getClients().add(c2);
 
         a1 = addressDbRepository.save(a1);
         a2 = addressDbRepository.save(a2);
 
         assertEquals(service.howManyClientsLiveHere(a1.getId()), 2);
         assertEquals(service.howManyClientsLiveHere(a2.getId()), 1);
-        assertThrows(ValidatorException.class, () -> service.howManyClientsLiveHere(45));
-
-        clientDbRepository.deleteAll();
+        assertThrows(ValidatorException.class, () -> service.howManyClientsLiveHere(100));
     }
 
 }

@@ -1,90 +1,143 @@
 package services.implementations;
 
 import domain.Coffee;
+import domain.ShopOrder;
 import domain.Validators.CoffeeValidator;
+import domain.Validators.CoffeeValidatorException;
 import domain.Validators.ValidatorException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import repositories.CoffeeDbRepository;
-import repositories.OrderDbRepository;
 import services.interfaces.ICoffeeService;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @org.springframework.stereotype.Service
-public class CoffeeService extends Service<Integer, Coffee> implements ICoffeeService {
+@RequiredArgsConstructor
+public class CoffeeService implements ICoffeeService {
 
-    private final OrderDbRepository orderDbRepository;
-
-    /**
-     * Constructor for CoffeeService
-     * @param constructorRepo of type {@code Repository<Integer, Coffee>}
-     */
-    public CoffeeService(CoffeeDbRepository constructorRepo, CoffeeValidator coffeeValidator,
-                         OrderDbRepository orderDbRepository) {
-        super(constructorRepo, coffeeValidator);
-        this.orderDbRepository = orderDbRepository;
-    }
+    private final CoffeeDbRepository coffeeDbRepository;
+    private final CoffeeValidator coffeeValidator;
 
     /**
-     * Gets the coffees that have a substring in their name in a set
-     * @param name of type String
+     * Gets a set of the coffees that have a certain substring in their name
+     * @param name: String
      * @return {@code Set<Coffee>}
      */
     @Transactional
     public Set<Coffee> filterCoffeesByName(String name) {
         log.info("filterCoffeesByName - method entered - name={}", name);
-        Set<Coffee> result = ((CoffeeDbRepository)this.repository).filterCoffeesByName(name);
+        Set<Coffee> result = coffeeDbRepository.filterCoffeesByName(name);
         log.info("filterCoffeesByName result={} - method finished", result);
         return result;
     }
 
     /**
-     * Gets the coffees that have a substring in their origin in a set
-     * @param origin : string
+     * Gets a set of the coffees that have a certain substring in their origin
+     * @param origin : String
      * @return {@code Set<Coffee>}
      */
     @Transactional
     public Set<Coffee> filterCoffeesByOrigin(String origin) {
         log.info("filterCoffeesByOrigin - method entered - origin={}", origin);
-        Set<Coffee> result = ((CoffeeDbRepository)this.repository).filterCoffeesByOrigin(origin);
+        Set<Coffee> result = coffeeDbRepository.filterCoffeesByOrigin(origin);
         log.info("filterCoffeesByOrigin result={} - method finished", result);
         return result;
     }
 
     /**
      * Gets the number of clients that ordered that coffee
-     * @param id : the id of the coffee
+     * @param id : Integer, the id of the coffee
      * @return Integer : the number of clients
      */
     @Transactional
     public Integer byHowManyClientsWasOrdered(Integer id) {
         log.info("byHowManyClientsWasOrdered - method entered - id={}", id);
-        Coffee coffee = this.findOne(id);
-        return this.orderDbRepository.byHowManyClientsWasItOrdered(coffee.getId());
+        return findOne(id).getOrders().stream()
+                .map(ShopOrder::getClient)
+                .collect(Collectors.toSet())
+                .size();
     }
 
     /**
-     * Updates an element
-     * @param element of type coffee
+     * Adds a coffee
+     * @param entity: Coffee (to be added)
+     * @throws ValidatorException
+     *      if the coffee is not valid or if it already exists
      */
     @Transactional
+    @Override
+    public void Add(Coffee entity) throws ValidatorException {
+        log.info("add coffee - method entered");
+        coffeeValidator.validate(entity);
+        try {
+            findOne(entity.getId());
+            throw new ValidatorException("Entity already exists");
+        } catch (CoffeeValidatorException ce) {
+            coffeeDbRepository.save(entity);
+        }
+    }
+
+    /**
+     * Updates a coffee
+     * @param element: Coffee (to be updated)
+     * @throws ValidatorException
+     *          if the coffee is not valid or if it doesn't exist
+     */
+    @Transactional
+    @Override
     public void Update(Coffee element) throws ValidatorException {
         log.info("update coffee - method entered");
-        validator.validate(element);
-        repository.findById(element.getId()).ifPresentOrElse(elem ->
-        {
-            elem.setPrice(element.getPrice());
-            elem.setQuantity(element.getQuantity());
-            elem.setName(element.getName());
-            elem.setOrigin(element.getOrigin());
-            repository.save(elem);
-        }, () -> {
-            log.info("update coffee - throwing exception");
-            throw new ValidatorException("No such element");
-        });
+        coffeeValidator.validate(element);
+        Coffee coffee = findOne(element.getId());
+        coffee.setPrice(element.getPrice());
+        coffee.setQuantity(element.getQuantity());
+        coffee.setName(element.getName());
+        coffee.setOrigin(element.getOrigin());
+        coffeeDbRepository.save(coffee);
         log.info("update coffee - method finished");
+    }
+
+    /**
+     * Deletes a coffee by id
+     * @param id: Integer, id of coffee
+     * @throws ValidatorException
+     *          if the coffee does not exist
+     */
+    @Transactional
+    @Override
+    public void Delete(Integer id) throws ValidatorException {
+        log.info("delete coffees w/ id {} - method entered", id);
+        Coffee coffee = findOne(id);
+        coffeeDbRepository.delete(coffee);
+    }
+
+    /**
+     * Returns a set of all coffees
+     * @return {@code Set<Coffee>}
+     */
+    @Override
+    public Set<Coffee> getAll() {
+        log.info("getAll coffees - method entered");
+        return new HashSet<>(coffeeDbRepository.findAll());
+    }
+
+    /**
+     * Returns a coffee by its id
+     * @param id: Integer, id of coffee
+     * @return Coffee
+     * @throws ValidatorException
+     *      if the coffee does not exist or id is null
+     */
+    @Override
+    public Coffee findOne(Integer id) throws ValidatorException {
+        log.info("getOne coffees w/ id {} - method entered", id);
+        if (id == null) throw new CoffeeValidatorException("Invalid coffee id");
+        return coffeeDbRepository.findById(id).orElseThrow(() -> new CoffeeValidatorException("Invalid coffee id"));
     }
 
 }

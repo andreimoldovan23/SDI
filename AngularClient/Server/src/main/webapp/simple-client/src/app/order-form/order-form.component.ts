@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import * as moment from 'moment';
+import { range } from 'rxjs';
 import { ChooseClientDialogComponent } from '../choose-client-dialog/choose-client-dialog.component';
 import { ChooseCoffeeDialogComponent } from '../choose-coffee-dialog/choose-coffee-dialog.component';
+import { DateRange } from '../interfaces/dateRange';
 import { ShopOrder } from '../interfaces/shoporder';
 
 @Component({
@@ -11,6 +14,8 @@ import { ShopOrder } from '../interfaces/shoporder';
 })
 export class OrderFormComponent implements OnInit {
   @Input() selectedOrder : ShopOrder;
+  initialStatus: string;
+
   @Output() statusEventEmitter = new EventEmitter<ShopOrder>();
   @Output() deleteDatesEventEmitter = new EventEmitter();
   @Output() buyEventEmitter = new EventEmitter();
@@ -18,9 +23,16 @@ export class OrderFormComponent implements OnInit {
   clientId : number;
   coffeeId : number;
 
-  constructor(private dialog: MatDialog) { }
+  range : DateRange = {date1: '', date2: ''};
+
+  constructor(private dialog: MatDialog) {
+  }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges() : void {
+    this.initialStatus = this.selectedOrder.status;
   }
 
   changeStatus() : void {
@@ -28,14 +40,8 @@ export class OrderFormComponent implements OnInit {
     this.statusEventEmitter.emit(newOrder);
   }
 
-  deleteBetweenDates(date1: string, date2: string) : void {
-    if (date1.match("[0-9]{4}-[0-9]{2}-[0-9]{2}//[0-9]{2}::[0-9]{2}::[0-9]{2}")
-        && date2.match("[0-9]{4}-[0-9]{2}-[0-9]{2}//[0-9]{2}::[0-9]{2}::[0-9]{2}")) {
-        const object = {date1: date1, date2: date2};
-        this.deleteDatesEventEmitter.emit(object);
-    } else {
-      window.alert("Invalid timestamp format. Hover over date to check format");
-    }
+  deleteBetweenDates() : void {
+      this.deleteDatesEventEmitter.emit(this.range);
   }
 
   buy() : void {
@@ -81,6 +87,21 @@ export class OrderFormComponent implements OnInit {
             this.coffeeId = data.id;
           }
         });
+  }
+
+  datesMatch() : boolean {
+    return this.range.date1 === this.range.date2 && !(this.range.date1 === '');
+  }
+
+  checkDates() : boolean {
+    if (this.range.date1 === '' || this.range.date2 === '') return true;
+    var newDate1 = moment(this.range.date1, "yyyy-MM-dd//HH::mm::ss").toDate();
+    var newDate2 = moment(this.range.date2, "yyyy-MM-dd//HH::mm::ss").toDate();
+    return newDate1 <= newDate2;
+  }
+
+  statusNotChanged() : boolean {
+    return this.initialStatus === this.selectedOrder.status;
   }
 
 }

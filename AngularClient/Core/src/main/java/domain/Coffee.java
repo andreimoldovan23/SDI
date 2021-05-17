@@ -3,8 +3,8 @@ package domain;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Coffee Entity
@@ -14,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
-@ToString(callSuper = true)
-@EqualsAndHashCode(exclude = {"quantity", "price"}, callSuper = true)
+@ToString(callSuper = true, exclude = "orders")
+@EqualsAndHashCode(exclude = {"quantity", "price", "orders"}, callSuper = true)
 
 @Entity
 @Table(indexes = {
@@ -27,6 +27,7 @@ public class Coffee extends BaseEntity<Integer> {
     private Integer quantity;
     private Integer price;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "coffee")
-    private List<ShopOrder> orders = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "coffee")
+    @Builder.Default
+    private Set<ShopOrder> orders = new HashSet<>();
 }

@@ -1,38 +1,34 @@
 package validators;
 
-import domain.*;
+import domain.Address;
+import domain.Client;
+import domain.Coffee;
 import domain.Validators.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidatorTest {
 
-    private OrderValidator orderValidator;
     private ClientValidator clientValidator;
     private CoffeeValidator coffeeValidator;
     private AddressValidator addressValidator;
     private Address address;
     private Client client;
     private Coffee coffee;
-    private ShopOrder shopOrder;
 
     @BeforeEach
     public void setUp()
     {
         clientValidator = new ClientValidator();
         coffeeValidator = new CoffeeValidator();
-        orderValidator = new OrderValidator();
         addressValidator = new AddressValidator();
 
         client = Client.builder()
                 .firstName("John")
                 .lastName("Mike")
-                .age(19)
                 .build();
         coffee = Coffee.builder()
                 .name("Arabica")
@@ -40,17 +36,12 @@ public class ValidatorTest {
                 .quantity(200)
                 .price(50)
                 .build();
-        shopOrder = ShopOrder.builder()
-                .client(client)
-                .coffee(coffee)
-                .status(Status.delivered)
-                .time(LocalDateTime.now())
-                .build();
         address = Address.builder()
                 .city("Los Angeles")
                 .street("Wolfgang Goethe")
                 .number(1)
                 .build();
+        client.setAddress(address);
     }
 
     @Test
@@ -179,16 +170,6 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testOrderValidator()
-    {
-        shopOrder = null;
-        Exception exception = assertThrows(OrderValidatorException.class, () -> orderValidator.validate(shopOrder));
-        String expectedMessage = "Object is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
     public void testAddressValidator()
     {
         address.setCity(null);
@@ -212,7 +193,7 @@ public class ValidatorTest {
         assertTrue(actualMessage.contains(expectedMessage));
         address.setNumber(1);
 
-        address.setCity("ab");
+        address.setCity("a");
         exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
         expectedMessage = "Invalid city name";
         actualMessage = exception.getMessage();
@@ -268,11 +249,9 @@ public class ValidatorTest {
     public void tearDown() {
         clientValidator = null;
         coffeeValidator = null;
-        orderValidator = null;
         addressValidator = null;
         client = null;
         coffee = null;
-        shopOrder = null;
         address = null;
     }
 

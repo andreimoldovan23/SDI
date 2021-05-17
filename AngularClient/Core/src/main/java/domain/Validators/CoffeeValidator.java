@@ -24,8 +24,8 @@ public class CoffeeValidator implements Validator<Integer, Coffee> {
         checkNumberField(entity.getQuantity(), "Quantity cannot be lower than 0");
         checkNumberField(entity.getPrice(), "Price cannot be lower than 0");
 
-        validateStringPattern(entity.getName(), "[a-zA-Z]+", "Name should contain only letters");
-        validateStringPattern(entity.getOrigin(), "[a-zA-Z ]+", "Origin should contain only letters");
+        validateStringPattern(entity.getName(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Name should contain only letters");
+        validateStringPattern(entity.getOrigin(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Origin should contain only letters");
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CoffeeValidator implements Validator<Integer, Coffee> {
      * @throws CoffeeValidatorException If the number is negative.
      */
     private void checkNumberField(Integer number, String message) throws CoffeeValidatorException {
-        Optional.ofNullable(number).ifPresent(value -> Optional.of(value).filter(n -> n > 0).orElseThrow(() -> {
+        Optional.ofNullable(number).ifPresent(value -> Optional.of(value).filter(n -> n >= 0).orElseThrow(() -> {
             throw new CoffeeValidatorException(message);
         }));
     }

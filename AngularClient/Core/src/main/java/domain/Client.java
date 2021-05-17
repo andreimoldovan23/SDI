@@ -3,8 +3,8 @@ package domain;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
-@ToString(callSuper = true, exclude = {"address"})
-@EqualsAndHashCode(callSuper = true, exclude = {"age", "phoneNumber", "address"})
+@ToString(callSuper = true, exclude = {"address", "orders"})
+@EqualsAndHashCode(callSuper = true, exclude = {"clientInfo", "address", "orders"})
 
 @Entity
 @Table(indexes = {
@@ -26,13 +26,31 @@ public class Client extends BaseEntity<Integer> {
     private String firstName;
     private String lastName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "address_id")
     private Address address;
 
-    private Integer age;
-    private String phoneNumber;
+    @Embedded
+    @Builder.Default
+    private ClientInfo clientInfo = new ClientInfo();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
-    private List<ShopOrder> orders = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "client")
+    @Builder.Default
+    private Set<ShopOrder> orders = new HashSet<>();
+
+    public Integer getAge() {
+        return clientInfo.getAge();
+    }
+
+    public void setAge(Integer newAge) {
+        clientInfo.setAge(newAge);
+    }
+
+    public String getPhoneNumber() {
+        return clientInfo.getPhoneNumber();
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        clientInfo.setPhoneNumber(phoneNumber);
+    }
 }

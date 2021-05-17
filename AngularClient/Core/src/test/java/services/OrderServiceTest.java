@@ -2,26 +2,27 @@ package services;
 
 import config.JpaConfig;
 import domain.*;
-import domain.Validators.ValidatorException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import repositories.AddressDbRepository;
 import repositories.ClientDbRepository;
 import repositories.CoffeeDbRepository;
-import repositories.OrderDbRepository;
 import services.interfaces.IClientService;
 import services.interfaces.ICoffeeService;
 import services.interfaces.IOrderService;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ContextConfiguration(classes = JpaConfig.class)
@@ -33,22 +34,19 @@ class OrderServiceTest {
     private ShopOrder order1, order11, order111, order2, order22, order3;
 
     @Autowired
-    AddressDbRepository addressDbRepository;
+    private AddressDbRepository addressDbRepository;
 
     @Autowired
-    ClientDbRepository clientDbRepository;
+    private ClientDbRepository clientDbRepository;
 
     @Autowired
-    CoffeeDbRepository coffeeDbRepository;
+    private CoffeeDbRepository coffeeDbRepository;
 
     @Autowired
-    OrderDbRepository orderDbRepository;
+    private ICoffeeService coffeeService;
 
     @Autowired
-    ICoffeeService coffeeService;
-
-    @Autowired
-    IClientService clientService;
+    private IClientService clientService;
 
     @Autowired
     private IOrderService orderService;
@@ -70,9 +68,9 @@ class OrderServiceTest {
                 .street("PalmStreet")
                 .number(12)
                 .build();
-        addressDbRepository.save(address1);
-        addressDbRepository.save(address2);
-        addressDbRepository.save(address3);
+        address1 = addressDbRepository.save(address1);
+        address2 = addressDbRepository.save(address2);
+        address3 = addressDbRepository.save(address3);
 
         client1 = Client.builder()
                 .firstName("first")
@@ -89,9 +87,15 @@ class OrderServiceTest {
                 .lastName("last")
                 .address(address3)
                 .build();
-        client1 = clientDbRepository.save(client1);
-        clientDbRepository.save(client2);
-        clientDbRepository.save(client3);
+        address1.getClients().add(client1);
+        address2.getClients().add(client2);
+        address3.getClients().add(client3);
+        address1 = addressDbRepository.save(address1);
+        address2 = addressDbRepository.save(address2);
+        address3 = addressDbRepository.save(address3);
+        client1 = address1.getClients().stream().findFirst().orElse(null);
+        client2 = address2.getClients().stream().findFirst().orElse(null);
+        client3 = address3.getClients().stream().findFirst().orElse(null);
 
         coffee1 = Coffee.builder()
                 .name("Jacobs")
@@ -109,8 +113,8 @@ class OrderServiceTest {
                 .price(15)
                 .build();
         coffee1 = coffeeDbRepository.save(coffee1);
-        coffeeDbRepository.save(coffee2);
-        coffeeDbRepository.save(coffee3);
+        coffee2 = coffeeDbRepository.save(coffee2);
+        coffee3 = coffeeDbRepository.save(coffee3);
 
         order1 = ShopOrder.builder()
                 .status(Status.delivered)
@@ -118,18 +122,26 @@ class OrderServiceTest {
                 .coffee(coffee1)
                 .time(LocalDateTime.of(2000, 3, 4, 0, 0))
                 .build();
+        client1.getOrders().add(order1);
+        client1 = clientDbRepository.save(client1);
+
         order11 = ShopOrder.builder()
                 .status(Status.delivered)
                 .client(client1)
                 .coffee(coffee2)
                 .time(LocalDateTime.of(2000, 3, 4, 0, 0))
                 .build();
+        client1.getOrders().add(order11);
+        client1 = clientDbRepository.save(client1);
+
         order111 = ShopOrder.builder()
                 .status(Status.delivered)
                 .client(client1)
                 .coffee(coffee3)
                 .time(LocalDateTime.of(2000, 3, 4, 0, 0))
                 .build();
+        client1.getOrders().add(order111);
+        client1 = clientDbRepository.save(client1);
 
 
         order2 = ShopOrder.builder()
@@ -138,12 +150,17 @@ class OrderServiceTest {
                 .status(Status.delivered)
                 .time(LocalDateTime.of(2010, 3, 4, 0, 0))
                 .build();
+        client2.getOrders().add(order2);
+        client2 = clientDbRepository.save(client2);
+
         order22 = ShopOrder.builder()
                 .client(client2)
                 .coffee(coffee2)
                 .status(Status.delivered)
                 .time(LocalDateTime.of(2010, 3, 4, 0, 0))
                 .build();
+        client2.getOrders().add(order22);
+        client2 = clientDbRepository.save(client2);
 
         order3 = ShopOrder.builder()
                 .client(client3)
@@ -151,39 +168,33 @@ class OrderServiceTest {
                 .status(Status.pending)
                 .time(LocalDateTime.of(2020, 3, 4, 0, 0))
                 .build();
+        client3.getOrders().add(order3);
+        client3 = clientDbRepository.save(client3);
 
-        order1 = orderDbRepository.save(order1);
-        order11 = orderDbRepository.save(order11);
-        order111 = orderDbRepository.save(order111);
+        List<Coffee> coffees = coffeeDbRepository.findAll();
+        coffee1 = coffees.get(0);
+        coffee2 = coffees.get(1);
+        coffee3 = coffees.get(2);
 
-        order2 = orderDbRepository.save(order2);
-        order22 = orderDbRepository.save(order22);
-
-        order3 = orderDbRepository.save(order3);
-
+        List<ShopOrder> orders = clientDbRepository.findAll().stream()
+                .flatMap(client -> client.getOrders().stream())
+                .collect(Collectors.toList());
+        order1 = orders.get(0);
+        order2 = orders.get(3);
     }
 
     @AfterEach
     public void tearDown() {
-        address1 = null;
-        address2 = null;
-        address3 = null;
-        client1 = null;
-        client2 = null;
-        client3 = null;
-        coffee1 = null;
-        coffee2 = null;
-        coffee3 = null;
-        order1 = null;
-        order11 = null;
-        order111 = null;
-        order2 = null;
-        order22 = null;
-        order3 = null;
-
-        orderDbRepository.deleteAll();
+        clientDbRepository.findAll().forEach(client -> {
+            client.getOrders().forEach(ord -> {
+                Coffee coffee = ord.getCoffee();
+                coffee.getOrders().remove(ord);
+                coffeeDbRepository.save(coffee);
+                ord.setCoffee(null);
+            });
+            clientDbRepository.save(client);
+        });
         coffeeDbRepository.deleteAll();
-        clientDbRepository.deleteAll();
         addressDbRepository.deleteAll();
     }
 
@@ -214,7 +225,8 @@ class OrderServiceTest {
     @Test
     void deleteOrderByDate() {
         assertEquals( 6, orderService.getAll().size());
-        orderService.deleteOrderByDate(LocalDateTime.of(1999, 3, 4, 0, 0), LocalDateTime.of(2019, 3, 4, 0, 0));
+        orderService.deleteOrderByDate(LocalDateTime.of(1999, 3, 4, 0, 0),
+                LocalDateTime.of(2019, 3, 4, 0, 0));
         assertEquals(1, orderService.getAll().size());
     }
 
@@ -228,45 +240,14 @@ class OrderServiceTest {
     @Test
     void changeStatus() {
         orderService.changeStatus(order2.getId(), Status.canceled);
-        assertTrue(orderDbRepository.findById(order2.getId()).isPresent());
-        assertEquals(Status.canceled, orderDbRepository.findById(order2.getId()).get().getStatus());
+        assertEquals((int) orderService.getAll().stream()
+                .filter(order -> order.getStatus().equals(Status.canceled)).count(), 1);
     }
 
     @Test
     public void getAllTest() {
         Set<ShopOrder> shopOrders = orderService.getAll();
         assertEquals(shopOrders.size(), 6);
-    }
-
-    @Test
-    public void getOneTest() {
-        ShopOrder shopOrder = orderService.findOne(order1.getId());
-        assertEquals(shopOrder, order1);
-    }
-
-    @Test
-    public void getOneBadTest() {
-        assertThrows(ValidatorException.class, () -> orderService.findOne(200));
-    }
-
-    @Test
-    public void deleteTest() {
-        assertThrows(DataAccessException.class, () -> orderService.Delete(200));
-        assertEquals(orderService.getAll().size(), 6);
-
-        orderService.Delete(order1.getId());
-        assertEquals(orderService.getAll().size(), 5);
-    }
-
-    @Test
-    public void updateTest() {
-        order1.setStatus(Status.canceled);
-
-        orderService.Update(order1);
-        assertEquals(orderService.findOne(order1.getId()).getStatus(), Status.canceled);
-
-        order1.setId(200);
-        assertThrows(ValidatorException.class, () -> orderService.Update(order1));
     }
 
 }

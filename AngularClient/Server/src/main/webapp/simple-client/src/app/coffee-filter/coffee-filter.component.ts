@@ -16,17 +16,17 @@ export class CoffeeFilterComponent implements OnInit {
   }
 
   searchName(term: string) : void {
-    if (term != "")
+    // if (term != "")
       this.nameEventEmitter.emit(term);
-    else 
-      window.alert("You need to input a name");
+    // else 
+    //   window.alert("You need to input a name");
   }
 
   searchOrigin(term: string) : void {
-    if (term != "")
+    // if (term != "")
       this.originEventEmitter.emit(term);
-    else
-      window.alert("You need to input an origin");
+    // else
+    //   window.alert("You need to input an origin");
   }
 
   reset() : void {

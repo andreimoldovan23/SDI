@@ -2,13 +2,13 @@
     <div>
         <label for="search-box-name">Name</label>
         <input #searchBoxName id="search-box-name" class="m-2 p-2"/>
-        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchName(searchBoxName.value)">Filter</button>
+        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchName(searchBoxName.value); searchBoxName.value=''">Filter</button>
     </div>
 
     <div>
         <label for="search-box-origin">Origin</label>
         <input #searchBoxOrigin id="search-box-origin" class="m-2 p-2">
-        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchOrigin(searchBoxOrigin.value)">Filter</button>
+        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchOrigin(searchBoxOrigin.value); searchBoxOrigin.value=''">Filter</button>
     </div>
 
     <button type="button" class="btn btn-success w-25" (click)="reset()">Reset</button>

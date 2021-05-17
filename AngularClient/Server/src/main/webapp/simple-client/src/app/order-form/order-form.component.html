@@ -1,4 +1,4 @@
-<div *ngIf="selectedOrder" class="d-flex flex-column m-2 p-2 text-monospace">
+<div class="d-flex flex-column m-2 p-2 text-monospace">
     <h1>Order Form</h1>
     <h4>Client name: {{selectedOrder.client.firstName}} {{selectedOrder.client.lastName}}</h4>
     <h4>Coffee: {{selectedOrder.coffee.name}} from {{selectedOrder.coffee.origin}}</h4>
@@ -12,20 +12,39 @@
             <option value="pending">Pending</option>
             <option value="delivered">Delivered</option>
         </select>
-        <button type="button" class="btn btn-success m-2 p-2" (click)="changeStatus()">Change status</button>
+        <button type="button" class="btn btn-success m-2 p-2" (click)="changeStatus()"
+            [disabled]="statusNotChanged()">Change status</button>
     </div>
 
-    <div>
-        <label for="date1" title="Date format: yyyy-MM-dd//HH::mm::ss">Date: </label>
-        <input #date1 name="date1" id="date1" type="text"
-            class="m-2 p-2">
+    <form #dateForm="ngForm">
+        <div class="form-group">
+            <label for="date1">Date: </label>
+            <input name="date1" id="date1" type="text" class="form-control m-2 p-2" [(ngModel)]="range.date1"
+                #date1="ngModel" pattern="^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}\/\/[0-9]{2}::[0-9]{2}::[0-9]{2}$">
+            <div *ngIf="date1.errors?.pattern" class="alert alert-danger">
+                Date format is of type: yyyy-MM-dd//HH::mm::ss
+            </div>
 
-        <label for="date2" title="Date format: yyyy-MM-dd//HH::mm::ss">Date: </label>
-        <input #date2 name="date2" id="date2" type="text"
-            class="m-2 p-2">
+            <label for="date2">Date: </label>
+            <input name="date2" id="date2" type="text" class="form-control m-2 p-2" [(ngModel)]="range.date2"
+                #date2="ngModel" pattern="^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}\/\/[0-9]{2}::[0-9]{2}::[0-9]{2}$">
+            <div *ngIf="date2.errors?.pattern" class="alert alert-danger">
+                Date format is of type: yyyy-MM-dd//HH::mm::ss
+            </div>
 
-        <button type="button" class="btn btn-danger w-25" (click)="deleteBetweenDates(date1.value, date2.value)">Delete orders between timestamps</button>
-    </div>
+            <div *ngIf="!dateForm.form.errors?.pattern && datesMatch()" class="alert alert-danger">
+                The dates must be different
+            </div>
+
+            <div *ngIf="!dateForm.form.errors?.pattern && !checkDates()" class="alert alert-danger">
+                The first date must be before the second one
+            </div>
+
+            <button type="button" class="btn btn-danger w-25" (click)="deleteBetweenDates()"
+                [disabled]="dateForm.form.errors?.pattern || date1.value == '' || date2.value == ''">Delete
+                orders between timestamps</button>
+        </div>
+    </form>
 
     <button type="button" class="btn btn-primary m-2 p-2 w-25" (click)="openClientDialog()">Choose client</button>
     <button type="button" class="btn btn-primary m-2 p-2 w-25" (click)="openCoffeeDialog()">Choose coffee</button>

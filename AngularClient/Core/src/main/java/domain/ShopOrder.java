@@ -19,11 +19,11 @@ import java.time.LocalDateTime;
 @Entity
 public class ShopOrder extends BaseEntity<Integer> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "coffee_id")
     private Coffee coffee;
 

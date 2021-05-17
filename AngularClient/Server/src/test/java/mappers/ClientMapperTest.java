@@ -18,6 +18,8 @@ public class ClientMapperTest extends AbstractMapperTest {
     public void clientToDTO() {
         address.setId(addressId);
         client.setId(clientId);
+        client.setAge(clientAge);
+        client.setPhoneNumber(clientPhoneNumber);
         ClientDTO dto = clientMapper.clientToDTO(client);
         AddressDTO dtoAddr = dto.getAddress();
 

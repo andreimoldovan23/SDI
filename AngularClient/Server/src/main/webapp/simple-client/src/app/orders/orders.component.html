@@ -18,7 +18,7 @@
     </div>
 
     <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
-        <app-order-form [selectedOrder]="cloneSelectedOrder"
+        <app-order-form *ngIf="selectedOrder" [selectedOrder]="cloneSelectedOrder"
         (statusEventEmitter)="changeStatus($event)"
         (buyEventEmitter)="buy($event)"
         (deleteDatesEventEmitter)="deleteBetweenDates($event)"></app-order-form>

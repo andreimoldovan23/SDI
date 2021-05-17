@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import repositories.CoffeeDbRepository;
 import services.interfaces.ICoffeeService;
@@ -25,7 +24,7 @@ public class CoffeeServiceTest {
     private Coffee c1, c2, c3;
 
     @Autowired
-    CoffeeDbRepository coffeeDBRepo;
+    private CoffeeDbRepository coffeeDBRepo;
 
     @Autowired
     private ICoffeeService service;
@@ -71,7 +70,6 @@ public class CoffeeServiceTest {
         Set<Coffee> nameLikeJ = service.filterCoffeesByName("J");
         Set<Coffee> nameLikeA = service.filterCoffeesByName("a");
 
-
         assertTrue(nameLikeJ.contains(c1));
         assertFalse(nameLikeJ.contains(c3));
 
@@ -105,27 +103,65 @@ public class CoffeeServiceTest {
 
     @Test
     public void getOneBadTest() {
-        assertThrows(ValidatorException.class, () -> service.findOne(200));
+        assertThrows(ValidatorException.class, () -> service.findOne(1000));
     }
 
     @Test
     public void deleteTest() {
-        assertThrows(DataAccessException.class, () -> service.Delete(200));
-        assertEquals(service.getAll().size(), 3);
-
         service.Delete(c1.getId());
         assertEquals(service.getAll().size(), 2);
     }
 
     @Test
+    public void deleteBadIdTest() {
+        assertThrows(ValidatorException.class, () -> service.Delete(1000));
+        assertEquals(service.getAll().size(), 3);
+    }
+
+    @Test
     public void updateTest() {
         c1.setPrice(45);
-
         service.Update(c1);
         assertEquals(service.findOne(c1.getId()).getPrice(), 45);
+    }
 
-        c1.setId(200);
+    @Test
+    public void updateBadIdTest() {
+        c1.setId(1000);
         assertThrows(ValidatorException.class, () -> service.Update(c1));
+    }
+
+    @Test
+    public void updateNotValidTest() {
+        c1.setName(null);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setName("Los- Mandingas");
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+
+        c1.setName("Los Mandingas");
+        c1.setQuantity(-3);
+        assertThrows(ValidatorException.class, () -> service.Update(c1));
+    }
+
+    @Test
+    public void addAlreadyExistentTest() {
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+    }
+
+    @Test
+    public void addNotValidTest() {
+        c1.setId(null);
+
+        c1.setName(null);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setName("Los- Mandingas");
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
+
+        c1.setName("Los Mandingas");
+        c1.setQuantity(-3);
+        assertThrows(ValidatorException.class, () -> service.Add(c1));
     }
 
 }

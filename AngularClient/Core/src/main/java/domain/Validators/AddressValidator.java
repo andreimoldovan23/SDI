@@ -16,8 +16,8 @@ public class AddressValidator implements Validator<Integer, Address>{
         checkNull(address.getStreet(), "Street is null");
         checkNull(address.getNumber(), "Number is null");
 
-        validateStringLength(address.getCity(), 3, "Invalid city name");
-        validateStringLength(address.getStreet(), 3, "Invalid street");
+        validateStringLength(address.getCity(), 1, "Invalid city name");
+        validateStringLength(address.getStreet(), 1, "Invalid street");
         validateString(address.getCity(), "Invalid city name");
         validateString(address.getStreet(), "Invalid street name");
         validateNumber(address.getNumber(), "Invalid number");
@@ -40,7 +40,7 @@ public class AddressValidator implements Validator<Integer, Address>{
 
     private void validateString(String str, String message) throws AddressValidatorException
     {
-        Optional.ofNullable(str).filter(e -> e.matches("^[a-zA-Z\\s]*$+")).orElseThrow(() ->
+        Optional.ofNullable(str).filter(e -> e.matches("([a-zA-Z])+([ -'][a-zA-Z]{1,})*")).orElseThrow(() ->
         {
             throw new AddressValidatorException(message);
         });

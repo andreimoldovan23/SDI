@@ -16,10 +16,10 @@ export class ClientFilterComponent implements OnInit {
   }
 
   searchName(term: string) : void {
-    if (term != "")
+    // if (term != "")
       this.nameEventEmitter.emit(term);
-    else 
-      window.alert("You need to input a name");
+    // else 
+    //   window.alert("You need to input a name");
   }
 
   searchAge(age1, age2) : void {

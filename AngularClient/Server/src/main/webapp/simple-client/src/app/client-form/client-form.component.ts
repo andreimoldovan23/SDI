@@ -12,12 +12,19 @@ import { SeeOrdersDialogComponent } from '../see-orders-dialog/see-orders-dialog
 })
 export class ClientFormComponent implements OnInit {
   @Input() selectedClient : Client;
+  initialClient : Client;
+
   @Output() updateEventEmitter = new EventEmitter<Client>();
   @Output() addEventEmitter = new EventEmitter();
 
   constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges() : void {
+      this.initialClient = JSON.parse(JSON.stringify(this.selectedClient));
+      this.initialClient.address = JSON.parse(JSON.stringify(this.selectedClient.address));
   }
 
   onSubmit() : void {
@@ -68,6 +75,12 @@ export class ClientFormComponent implements OnInit {
     dialogConfig.data = this.selectedClient.id;
 
     this.dialog.open(SeeOrdersDialogComponent, dialogConfig);
+  }
+
+  isPristine() : boolean {
+      return this.initialClient.firstName === this.selectedClient.firstName
+          && this.initialClient.lastName === this.selectedClient.lastName
+          && JSON.stringify(this.initialClient.address) === JSON.stringify(this.selectedClient.address);
   }
 
 }

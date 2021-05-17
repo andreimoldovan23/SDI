@@ -21,7 +21,7 @@
     </div>
 
     <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
-        <app-coffee-form [selectedCoffee]="cloneSelectedCoffee"
+        <app-coffee-form *ngIf="selectedCoffee" [selectedCoffee]="cloneSelectedCoffee"
         (updateEventEmitter)="update($event)"
         (addEventEmitter)="add($event)"></app-coffee-form>
 

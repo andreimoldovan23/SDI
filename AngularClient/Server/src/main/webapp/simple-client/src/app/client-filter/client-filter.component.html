@@ -2,7 +2,7 @@
     <div>
         <label for="search-box-name">Name</label>
         <input #searchBoxName id="search-box-name" class="m-2 p-2"/>
-        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchName(searchBoxName.value)">Filter</button>
+        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchName(searchBoxName.value); searchBoxName.value=''">Filter</button>
     </div>
 
     <div>
@@ -12,7 +12,8 @@
         <label for="search-box-age2">High age limit</label>
         <input #searchBoxAge2 id="search-box-age2" class="m-2 p-2" type="number">
 
-        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchAge(searchBoxAge1.value, searchBoxAge2.value)">Filter</button>
+        <button type="button" class="btn btn-primary m-2 p-2" (click)="searchAge(searchBoxAge1.value, searchBoxAge2.value);
+        searchBoxAge1.value=''; searchBoxAge2.value=''">Filter</button>
     </div>
 
     <button type="button" class="btn btn-success w-25" (click)="reset()">Reset</button>

@@ -21,7 +21,7 @@
     </div>
 
     <div class="w-50 h-100 m-2 p-2 d-flex flex-column">
-        <app-client-form [selectedClient]="cloneSelectedClient"
+        <app-client-form *ngIf="selectedClient" [selectedClient]="cloneSelectedClient"
         (updateEventEmitter)="update($event)"
         (addEventEmitter)="add($event)"></app-client-form>
 
