@@ -15,18 +15,31 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
-@ToString(callSuper = true, exclude = {"address", "orders"})
-@EqualsAndHashCode(callSuper = true, exclude = {"clientInfo", "address", "orders"})
+@ToString(callSuper = true, exclude = {"orders"})
+@EqualsAndHashCode(callSuper = true, exclude = {"orders"})
 
 @Entity
 @Table(indexes = {
         @Index(name = "clientUnique", columnList = "firstName, lastName, address_id", unique = true)
 })
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.ClientWithAddress",
+            attributeNodes = @NamedAttributeNode(value = "address", subgraph = "subgraph.AddressClients"),
+            subgraphs = @NamedSubgraph(name = "subgraph.AddressClients",
+                attributeNodes = @NamedAttributeNode("clients"))),
+
+        @NamedEntityGraph(name = "graph.ClientWithOrders",
+            attributeNodes = @NamedAttributeNode(value = "orders", subgraph = "subgraph.OrdersClientCoffee"),
+            subgraphs = @NamedSubgraph(name = "subgraph.OrdersClientCoffee",
+                    attributeNodes = {
+                        @NamedAttributeNode("client"), @NamedAttributeNode("coffee")
+                    }))
+})
 public class Client extends BaseEntity<Integer> {
     private String firstName;
     private String lastName;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -34,7 +47,7 @@ public class Client extends BaseEntity<Integer> {
     @Builder.Default
     private ClientInfo clientInfo = new ClientInfo();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "client")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
     @Builder.Default
     private Set<ShopOrder> orders = new HashSet<>();
 

@@ -7,11 +7,12 @@ import domain.Validators.CoffeeValidatorException;
 import domain.Validators.ValidatorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import repositories.CoffeeDbRepository;
+import repositories.coffeeFragments.CoffeeDbRepository;
 import services.interfaces.ICoffeeService;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,8 @@ public class CoffeeService implements ICoffeeService {
      * @param name: String
      * @return {@code Set<Coffee>}
      */
-    @Transactional
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
+    @Override
     public Set<Coffee> filterCoffeesByName(String name) {
         log.info("filterCoffeesByName - method entered - name={}", name);
         Set<Coffee> result = coffeeDbRepository.filterCoffeesByName(name);
@@ -41,7 +43,8 @@ public class CoffeeService implements ICoffeeService {
      * @param origin : String
      * @return {@code Set<Coffee>}
      */
-    @Transactional
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
+    @Override
     public Set<Coffee> filterCoffeesByOrigin(String origin) {
         log.info("filterCoffeesByOrigin - method entered - origin={}", origin);
         Set<Coffee> result = coffeeDbRepository.filterCoffeesByOrigin(origin);
@@ -54,10 +57,11 @@ public class CoffeeService implements ICoffeeService {
      * @param id : Integer, the id of the coffee
      * @return Integer : the number of clients
      */
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, isolation = Isolation.READ_COMMITTED)
+    @Override
     public Integer byHowManyClientsWasOrdered(Integer id) {
         log.info("byHowManyClientsWasOrdered - method entered - id={}", id);
-        return findOne(id).getOrders().stream()
+        return findOneWithOrders(id).getOrders().stream()
                 .map(ShopOrder::getClient)
                 .collect(Collectors.toSet())
                 .size();
@@ -75,7 +79,7 @@ public class CoffeeService implements ICoffeeService {
         log.info("add coffee - method entered");
         coffeeValidator.validate(entity);
         try {
-            findOne(entity.getId());
+            findOneWithOrders(entity.getId());
             throw new ValidatorException("Entity already exists");
         } catch (CoffeeValidatorException ce) {
             coffeeDbRepository.save(entity);
@@ -88,17 +92,19 @@ public class CoffeeService implements ICoffeeService {
      * @throws ValidatorException
      *          if the coffee is not valid or if it doesn't exist
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public void Update(Coffee element) throws ValidatorException {
         log.info("update coffee - method entered");
+
         coffeeValidator.validate(element);
-        Coffee coffee = findOne(element.getId());
+        Coffee coffee = findOneWithOrders(element.getId());
         coffee.setPrice(element.getPrice());
         coffee.setQuantity(element.getQuantity());
         coffee.setName(element.getName());
         coffee.setOrigin(element.getOrigin());
         coffeeDbRepository.save(coffee);
+
         log.info("update coffee - method finished");
     }
 
@@ -112,7 +118,7 @@ public class CoffeeService implements ICoffeeService {
     @Override
     public void Delete(Integer id) throws ValidatorException {
         log.info("delete coffees w/ id {} - method entered", id);
-        Coffee coffee = findOne(id);
+        Coffee coffee = findOneWithOrders(id);
         coffeeDbRepository.delete(coffee);
     }
 
@@ -120,10 +126,11 @@ public class CoffeeService implements ICoffeeService {
      * Returns a set of all coffees
      * @return {@code Set<Coffee>}
      */
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Override
     public Set<Coffee> getAll() {
         log.info("getAll coffees - method entered");
-        return new HashSet<>(coffeeDbRepository.findAll());
+        return coffeeDbRepository.findAllWithOrders();
     }
 
     /**
@@ -133,11 +140,10 @@ public class CoffeeService implements ICoffeeService {
      * @throws ValidatorException
      *      if the coffee does not exist or id is null
      */
-    @Override
-    public Coffee findOne(Integer id) throws ValidatorException {
+    private Coffee findOneWithOrders(Integer id) throws ValidatorException {
         log.info("getOne coffees w/ id {} - method entered", id);
         if (id == null) throw new CoffeeValidatorException("Invalid coffee id");
-        return coffeeDbRepository.findById(id).orElseThrow(() -> new CoffeeValidatorException("Invalid coffee id"));
+        return coffeeDbRepository.findByIdWithOrders(id).orElseThrow(() -> new CoffeeValidatorException("Invalid coffee id"));
     }
 
 }

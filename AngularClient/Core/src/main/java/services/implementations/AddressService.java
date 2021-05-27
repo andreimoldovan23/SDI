@@ -6,9 +6,10 @@ import domain.Validators.AddressValidatorException;
 import domain.Validators.ValidatorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import repositories.AddressDbRepository;
-import repositories.ClientDbRepository;
+import repositories.addressFragments.AddressDbRepository;
+import repositories.clientFragments.ClientDbRepository;
 import services.interfaces.IAddressService;
 
 import java.util.HashSet;
@@ -27,7 +28,8 @@ public class AddressService implements IAddressService {
      * Deletes all addresses with a given street number
      * @param number: integer
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
     public void deleteAddressWithNumber(Integer number) {
         log.info("deleteAddressWithNumber - method entered - number={}", number);
         addressDbRepository.deleteAddressByNumber(number);
@@ -59,7 +61,7 @@ public class AddressService implements IAddressService {
      * @throws ValidatorException
      *          if the address is not valid or if it doesn't exist
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public void Update(Address element) throws ValidatorException {
         log.info("update address w/ id {} - method entered", element.getId());
@@ -90,6 +92,7 @@ public class AddressService implements IAddressService {
      * Returns a set of all addresses
      * @return {@code Set<Address>}
      */
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Override
     public Set<Address> getAll() {
         log.info("getAll address - method entered");
@@ -103,8 +106,7 @@ public class AddressService implements IAddressService {
      * @throws ValidatorException
      *      if the address does not exist or id is null
      */
-    @Override
-    public Address findOne(Integer id) throws ValidatorException {
+    private Address findOne(Integer id) throws ValidatorException {
         log.info("findOne w/ id {} address - method entered", id);
         if (id == null) throw new AddressValidatorException("Invalid address id");
         return addressDbRepository.findById(id).orElseThrow(() -> new AddressValidatorException("Invalid address id"));
@@ -115,7 +117,8 @@ public class AddressService implements IAddressService {
      * @param id : the id of the address
      * @return Integer : the number of clients living there
      */
-    @Transactional
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
+    @Override
     public Integer howManyClientsLiveHere(Integer id) {
         log.info("howManyClientsLiveHere - method entered - id={}", id);
         return clientDbRepository.countClientsLivingAtAddress(findOne(id).getId());

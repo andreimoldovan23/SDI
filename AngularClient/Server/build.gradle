@@ -11,6 +11,18 @@ dependencies {
     implementation group: 'javax.servlet', name: 'javax.servlet-api', version:"4.0.1"
 
     implementation group: 'org.springframework', name: 'spring-tx', version: '5.3.6'
+
+    implementation group: 'org.springframework', name: 'spring-web', version: '4.3.6.RELEASE'
+
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testImplementation (group: 'org.mockito', name: 'mockito-core', version: '2.7.9'){
+        exclude group:'org.hamcrest',module:'hamcrest-core'
+    }
+
+    testImplementation (group: 'com.jayway.jsonpath', name: 'json-path-assert', version: '2.2.0'){
+        exclude group:'org.hamcrest',module:'hamcrest-core'
+        exclude group:'org.slf4j',module:'slf4j-api'
+    }
 }
 
 war {

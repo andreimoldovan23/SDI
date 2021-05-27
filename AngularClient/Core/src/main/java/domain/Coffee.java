@@ -15,11 +15,19 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @ToString(callSuper = true, exclude = "orders")
-@EqualsAndHashCode(exclude = {"quantity", "price", "orders"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"orders"}, callSuper = true)
 
 @Entity
 @Table(indexes = {
         @Index(name = "coffeeUnique", columnList = "name, origin", unique = true)
+})
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.CoffeeWithOrders",
+            attributeNodes = @NamedAttributeNode(value = "orders", subgraph = "subgraph.OrderClientCoffee"),
+            subgraphs = @NamedSubgraph(name = "subgraph.OrderClientCoffee",
+                attributeNodes = {
+                    @NamedAttributeNode("client"), @NamedAttributeNode("coffee")
+                }))
 })
 public class Coffee extends BaseEntity<Integer> {
     private String name;
@@ -27,7 +35,7 @@ public class Coffee extends BaseEntity<Integer> {
     private Integer quantity;
     private Integer price;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "coffee")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "coffee")
     @Builder.Default
     private Set<ShopOrder> orders = new HashSet<>();
 }

@@ -4,11 +4,13 @@ import domain.Address;
 import domain.Client;
 import domain.Coffee;
 import domain.Validators.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class ValidatorTest {
 
@@ -19,7 +21,10 @@ public class ValidatorTest {
     private Client client;
     private Coffee coffee;
 
-    @BeforeEach
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Before
     public void setUp()
     {
         clientValidator = new ClientValidator();
@@ -48,191 +53,165 @@ public class ValidatorTest {
     public void testClientValidator()
     {
         client.setFirstName(null);
-        Exception exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        String expectedMessage = "First name is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("First name is null");
+        clientValidator.validate(client);
         client.setFirstName("John");
 
         client.setLastName(null);
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Last name is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Last name is null");
+        clientValidator.validate(client);
         client.setLastName("John");
 
         client.setAge(1);
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Invalid age";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid age");
+        clientValidator.validate(client);
         client.setAge(19);
 
         client.setFirstName("a");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Invalid First Name";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid first name");
+        clientValidator.validate(client);
         client.setFirstName("John");
 
         client.setFirstName("abcd ,?");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "First Name should contain only letters";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid first name");
+        clientValidator.validate(client);
         client.setFirstName("John");
 
         client.setLastName("a");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Invalid Last Name";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid last name");
+        clientValidator.validate(client);
         client.setLastName("John");
 
         client.setLastName("abcd ,?");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Last Name should contain only letters";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid last name");
+        clientValidator.validate(client);
         client.setLastName("John");
 
         client.setPhoneNumber("123");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Invalid phone number";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid phone number");
+        clientValidator.validate(client);
         client.setPhoneNumber("0123456789");
 
         client.setPhoneNumber("abcd ,? ####!!!!@@@#!");
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Phone Number should contain only digits";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Invalid phone number");
+        clientValidator.validate(client);
         client.setPhoneNumber("0123456789");
 
         client = null;
-        exception = assertThrows(ClientValidatorException.class, () -> clientValidator.validate(client));
-        expectedMessage = "Object is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(ClientValidatorException.class);
+        exceptionRule.expectMessage("Object is null");
+        clientValidator.validate(client);
     }
 
     @Test
     public void testCoffeeValidator()
     {
         coffee.setName(null);
-        Exception exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        String expectedMessage = "Name is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Name is null");
+        coffeeValidator.validate(coffee);
         coffee.setName("something");
 
         coffee.setOrigin(null);
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Origin is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Origin is null");
+        coffeeValidator.validate(coffee);
         coffee.setOrigin("something");
 
         coffee.setName("abcd ,?");
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Name should contain only letters";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Invalid name");
+        coffeeValidator.validate(coffee);
         coffee.setName("something");
 
         coffee.setOrigin("abcd ,?");
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Origin should contain only letters";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Invalid origin");
+        coffeeValidator.validate(coffee);
         coffee.setOrigin("something");
 
         coffee.setQuantity(-1);
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Quantity cannot be lower than 0";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Quantity cannot be lower than 0");
+        coffeeValidator.validate(coffee);
         coffee.setQuantity(25);
 
         coffee.setPrice(-1);
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Price cannot be lower than 0";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Price cannot be lower than 0");
+        coffeeValidator.validate(coffee);
         coffee.setPrice(25);
 
         coffee = null;
-        exception = assertThrows(CoffeeValidatorException.class, () -> coffeeValidator.validate(coffee));
-        expectedMessage = "Object is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(CoffeeValidatorException.class);
+        exceptionRule.expectMessage("Object is null");
+        coffeeValidator.validate(coffee);
     }
 
     @Test
     public void testAddressValidator()
     {
         address.setCity(null);
-        Exception exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        String expectedMessage = "City is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("City is null");
+        addressValidator.validate(address);
         address.setCity("abcd");
 
         address.setStreet(null);
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Street is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Street is null");
+        addressValidator.validate(address);
         address.setStreet("abcd");
 
         address.setNumber(null);
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Number is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Number is null");
+        addressValidator.validate(address);
         address.setNumber(1);
 
         address.setCity("a");
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Invalid city name";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Invalid city name");
+        addressValidator.validate(address);
         address.setCity("abce");
 
         address.setStreet("");
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Invalid street";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Invalid street");
+        addressValidator.validate(address);
         address.setStreet("abce");
 
         address.setCity("abccc5464 as");
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Invalid city name";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Invalid city name");
+        addressValidator.validate(address);
         address.setCity("abce");
 
         address.setStreet("abccc5464 as");
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Invalid street name";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Invalid street name");
+        addressValidator.validate(address);
         address.setStreet("abce");
 
         address.setNumber(-1);
-        exception = assertThrows(AddressValidatorException.class, () -> addressValidator.validate(address));
-        expectedMessage = "Invalid number";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Invalid number");
+        addressValidator.validate(address);
         address.setNumber(1);
 
         address = null;
-        exception = assertThrows(AddressValidatorException.class, () ->  addressValidator.validate(address));
-        expectedMessage = "Object is null";
-        actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        exceptionRule.expect(AddressValidatorException.class);
+        exceptionRule.expectMessage("Object is null");
+        addressValidator.validate(address);
     }
 
     @Test
@@ -245,7 +224,7 @@ public class ValidatorTest {
         assertNull(Validator.checkInput("null", "null", false));
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
         clientValidator = null;
         coffeeValidator = null;

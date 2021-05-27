@@ -24,8 +24,8 @@ public class CoffeeValidator implements Validator<Integer, Coffee> {
         checkNumberField(entity.getQuantity(), "Quantity cannot be lower than 0");
         checkNumberField(entity.getPrice(), "Price cannot be lower than 0");
 
-        validateStringPattern(entity.getName(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Name should contain only letters");
-        validateStringPattern(entity.getOrigin(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Origin should contain only letters");
+        validateStringPattern(entity.getName(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Invalid name");
+        validateStringPattern(entity.getOrigin(), "([a-zA-Z])+([ -'][a-zA-Z]{1,})*", "Invalid origin");
     }
 
     @Override

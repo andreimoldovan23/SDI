@@ -1,0 +1,27 @@
+<dataset>
+    <address id="1" city="Moscow" street="Kremlin Street" number="10"/>
+    <address id="2" city="Las Vegas" street="Palm Street" number="30"/>
+    <address id="3" city="Los Angeles" street="Casino Street" number="10"/>
+    <address id="4" city="Miami" street="M Street" number="30"/>
+
+    <client id="1" firstName="Mike" lastName="Tyson" age="45" phoneNumber="+40756823468" address_id="1"/>
+    <client id="2" firstName="Mike" lastName="Johnson" age="50" phoneNumber="+40756823468" address_id="1"/>
+    <client id="3" firstName="John" lastName="Johnson" age="40" phoneNumber="+40756823468" address_id="2"/>
+    <client id="4" firstName="Johnson" lastName="Gregory" age="35" phoneNumber="+40756823468" address_id="3"/>
+    <client id="5" firstName="Ezekiel" lastName="Bull" age="30" phoneNumber="+40756823468" address_id="4"/>
+
+    <coffee id="1" name="Blue Mountain" origin="Jamaica" quantity="100" price="100"/>
+    <coffee id="2" name="Yirgacheffe" origin="Ethiopia" quantity="100" price="100"/>
+    <coffee id="3" name="Hamaran" origin="Saudi Arabia" quantity="100" price="100"/>
+
+    <shopOrder id="1" client_id="1" coffee_id="1" status="pending" time="2007-10-10 12:00:00"/>
+    <shopOrder id="2" client_id="1" coffee_id="2" status="pending" time="2008-10-10 12:00:00"/>
+    <shopOrder id="3" client_id="1" coffee_id="3" status="pending" time="2009-10-10 12:00:00"/>
+    <shopOrder id="4" client_id="3" coffee_id="1" status="pending" time="2010-10-10 12:00:00"/>
+    <shopOrder id="5" client_id="4" coffee_id="3" status="pending" time="2020-10-10 12:00:00"/>
+    <shopOrder id="6" client_id="5" coffee_id="2" status="pending" time="2020-10-10 12:00:00"/>
+    <shopOrder id="7" client_id="5" coffee_id="1" status="pending" time="2020-10-10 12:00:00"/>
+    <shopOrder id="8" client_id="2" coffee_id="1" status="pending" time="2020-10-10 12:00:00"/>
+    <shopOrder id="9" client_id="2" coffee_id="3" status="pending" time="2020-10-10 12:00:00"/>
+    <shopOrder id="10" client_id="1" coffee_id="1" status="pending" time="2020-10-10 12:00:00"/>
+</dataset>

@@ -1,6 +1,5 @@
 package config;
 
-import com.mysql.jdbc.Driver;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,14 +16,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
+//460
 @Configuration
-@PropertySources(
-        @PropertySource("classpath:application.properties")
+@EnableJpaRepositories(basePackages = {"repositories"},
+        repositoryImplementationPostfix = "ImplEM"
+//        repositoryImplementationPostfix = "ImplCriteria"
+//        repositoryImplementationPostfix = "ImplNative"
 )
-@EnableJpaRepositories({"repositories"})
 @EnableTransactionManagement
-@ComponentScan(basePackages = {"services", "domain.Validators"})
 public class JpaConfig {
 
     @Value("${db.jdbcUrl}")
@@ -42,20 +41,18 @@ public class JpaConfig {
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
+        config.setAutoCommit(false);
         config.setJdbcUrl(jdbcUrl);
         config.setUsername(username);
         config.setPassword(password);
-        config.setDriverClassName(Driver.class.getName());
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setDriverClassName("org.h2.Driver");
         return new HikariDataSource(config);
     }
 
     @Bean
     public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setDatabase(Database.MYSQL);
+        vendorAdapter.setDatabase(Database.H2);
         vendorAdapter.setGenerateDdl(generateDDL);
         vendorAdapter.setShowSql(false);
 

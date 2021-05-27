@@ -10,5 +10,4 @@ public interface ICrudService<ID, T extends BaseEntity<ID>> {
     void Update(T entity) throws ValidatorException;
     void Delete(ID id) throws ValidatorException;
     Set<T> getAll();
-    T findOne(ID id) throws ValidatorException;
 }

@@ -44,11 +44,6 @@ public class ClientController {
                 .map(clientMapper::clientToDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public ClientDTO getOne(@PathVariable Integer id) {
-        return clientMapper.clientToDTO(clientService.findOne(id));
-    }
-
     @GetMapping("/report")
     public Integer howManyCoffeesClientOrdered(@RequestParam(name = "id") Integer id) {
         return clientService.howManyCoffeesClientOrdered(id);

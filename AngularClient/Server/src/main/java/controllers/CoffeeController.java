@@ -43,11 +43,6 @@ public class CoffeeController {
         return coffeeService.getAll().stream().map(coffeeMapper::coffeeToDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public CoffeeDTO getOne(@PathVariable Integer id) {
-        return coffeeMapper.coffeeToDTO(coffeeService.findOne(id));
-    }
-
     @GetMapping("/report")
     public Integer howManyClientsOrderedCoffee(@RequestParam(name = "id") Integer id) {
         return coffeeService.byHowManyClientsWasOrdered(id);

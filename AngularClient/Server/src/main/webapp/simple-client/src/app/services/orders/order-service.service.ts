@@ -61,7 +61,7 @@ export class OrderService {
 
   filterClientOrders(id: number) : Observable<ShopOrder[]> {
     const url = `${this.baseUrl}/filterClientOrders?id=${id}`;
-    const logMessage = `ClientService: filterClientOrders w/ id=${id}`;
+    const logMessage = `OrderService: filterClientOrders w/ id=${id}`;
     const errorMessage = `filterClientOrders w/ id=${id}`;
     return this.utils.filter<ShopOrder>(url, logMessage, errorMessage);
   }

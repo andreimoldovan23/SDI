@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
-@ToString(exclude = {"coffee", "client"}, callSuper = true)
-@EqualsAndHashCode(exclude = {"coffee", "client"}, callSuper = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 
 @Entity
 public class ShopOrder extends BaseEntity<Integer> {
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "coffee_id")
     private Coffee coffee;
 

@@ -37,11 +37,6 @@ public class AddressController {
         return addressService.getAll().stream().map(addressMapper::addressToDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public AddressDTO getOne(@PathVariable Integer id) {
-        return addressMapper.addressToDTO(addressService.findOne(id));
-    }
-
     @GetMapping("/report")
     public Integer howManyClientsAtAddress(@RequestParam(name = "id") Integer id) {
         return addressService.howManyClientsLiveHere(id);

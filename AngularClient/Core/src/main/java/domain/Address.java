@@ -23,12 +23,16 @@ import java.util.Set;
 @Table(indexes = {
         @Index(name = "addressUnique", columnList = "city, street, number", unique = true)
 })
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.AddressWithClients",
+            attributeNodes = @NamedAttributeNode("clients"))
+})
 public class Address extends BaseEntity<Integer> {
     private String city;
     private String street;
     private Integer number;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "address")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "address")
     @Builder.Default
     private Set<Client> clients = new HashSet<>();
 }
