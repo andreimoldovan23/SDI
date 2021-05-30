@@ -42,7 +42,7 @@
     <div class="form-group">
       <label for="phoneNumber">Phone number: </label>
       <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="selectedClient.phoneNumber"
-        name="phoneNumber" #phoneNumber="ngModel" pattern="^(\\+[1-9]{1,2})?0[1-9][0-9]{8,}$">
+        name="phoneNumber" #phoneNumber="ngModel" pattern="^(\+[1-9]{1,2})?0[1-9][0-9]{8,}$">
 
       <div *ngIf="phoneNumber.errors?.pattern" class="alert alert-danger">
         Invalid phone number
