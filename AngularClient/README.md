@@ -1,5 +1,5 @@
 -a client server approach\
 -the server is a REST api\
--the client is develop in angular\
+-the client is developed in angular\
 -data persistence is achieved with spring data jpa and hibernate\
 -data is lazily loaded, custom repo implementations to optimize hibernate queries

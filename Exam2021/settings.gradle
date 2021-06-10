@@ -1,0 +1,4 @@
+rootProject.name = 'ex-0610-andreimoldovan23'
+include 'core'
+include 'web'
+

@@ -1,0 +1,12 @@
+<div *ngIf="user">
+    Hello user: <span>{{user.name}}</span>
+    <div *ngIf="user.followers">
+        Followers:
+        <ol>
+            <li *ngFor="let follower of user.followers">
+                <span>{{follower.name}}</span>
+            </li>
+        </ol>
+    </div>
+</div>
+

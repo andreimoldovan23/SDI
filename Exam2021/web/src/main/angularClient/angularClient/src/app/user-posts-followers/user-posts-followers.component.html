@@ -1,0 +1,25 @@
+<div *ngIf="user">
+    Hello user: <span>{{user.name}}</span>
+    <div *ngIf="user.followers">
+        Followers:
+        <ol>
+            <li *ngFor="let follower of user.followers">
+                <span>{{follower.name}}</span>
+            </li>
+        </ol>
+    </div>
+
+    <div *ngIf="user.posts">
+        Posts:
+        <ol>
+            <li *ngFor="let post of user.posts">
+                <span>{{post.title}}</span>
+                <ul *ngIf="post.comments">
+                    <li *ngFor="let comment of post.comments">
+                        <span>{{comment.text}}</span>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
