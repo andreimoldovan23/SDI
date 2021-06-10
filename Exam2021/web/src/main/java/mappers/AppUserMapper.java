@@ -16,4 +16,6 @@ public interface AppUserMapper {
     AppUserDTO entityFollowersToDTO(AppUser appUser);
 
     AppUserDTO entityPostsFollowersToDTO(AppUser appUser);
+
+    AppUser dtoToEntity(AppUserDTO userDTO);
 }

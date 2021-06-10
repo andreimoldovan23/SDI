@@ -14,11 +14,25 @@ export class UserHelloComponent implements OnInit {
   constructor(private service: AppUserService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => this.getUser(parseInt(params['id'])))
+    let routeString = this.route.toString();
+    if (routeString.indexOf('v2') > -1) {
+      this.route.params.subscribe(params => this.getUserDetails(parseInt(params['id'])));
+    } else {
+      this.route.params.subscribe(params => this.getUser(parseInt(params['id'])))
+    }
   }
 
   private getUser(id) : void {
     this.service.getUser(id)
+      .subscribe(result => this.user = result);
+  }
+
+  private getUserDetails(id) : void {
+    const user = {
+      name: 'u1'
+    } as User;
+    
+    this.service.getUserDetails(id, user)
       .subscribe(result => this.user = result);
   }
 

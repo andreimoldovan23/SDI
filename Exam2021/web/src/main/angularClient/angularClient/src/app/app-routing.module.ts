@@ -7,7 +7,10 @@ import { UserPostsFollowersComponent } from './user-posts-followers/user-posts-f
 const routes: Routes = [
   {path: "blog/user-hello/:id", component: UserHelloComponent},
   {path: "blog/user-followers/:id", component: UserFollowersComponent},
-  {path: "blog/user-posts-followers/:id", component: UserPostsFollowersComponent}
+  {path: "blog/user-posts-followers/:id", component: UserPostsFollowersComponent},
+  {path: "v2/blog/user-hello/:id", component: UserHelloComponent},
+  {path: "v2/blog/user-followers/:id", component: UserFollowersComponent},
+  {path: "v2/blog/user-posts-followers/:id", component: UserPostsFollowersComponent}
 ];
 
 @NgModule({

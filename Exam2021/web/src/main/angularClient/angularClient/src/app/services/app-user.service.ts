@@ -50,4 +50,13 @@ export class AppUserService {
       );
   }
 
+  getUserDetails(id: number, user: User) : Observable<User> {
+    const url = `${this.baseUrl}/user/${id}`;
+    const logMessage = `searching user w/ id=${id} w/ format=${user}`;
+    return this.http.post<User>(url, user, this.options)
+      .pipe(
+        catchError(this.handleError<User>(logMessage))
+      );
+  }
+
 }
