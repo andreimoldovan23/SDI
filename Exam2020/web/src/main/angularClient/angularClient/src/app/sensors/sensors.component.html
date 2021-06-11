@@ -1,0 +1,15 @@
+<div *ngIf="namesList">
+    <ol>
+        <li *ngFor="let m of namesList.measurements">
+            <span>Sensor name: {{m.name}}  
+                <button *ngIf="show" (click)="kill(m.name)">STOP</button>
+            </span>
+            <ul *ngIf="show">
+                <li *ngFor="let measurement of sensors[m.name].measurements">
+                    <span>{{measurement.time}} -- {{measurement.measurement}}</span>
+                </li>
+            </ul>
+        </li>
+    </ol>
+    <button (click)="getUpdates()">SHOW</button>
+</div>

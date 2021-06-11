@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "5.3.0" apply false
+}
+
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    group 'sdi.sensors'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+        implementation group: 'org.springframework', name: 'spring-context', version: "5.0.3.RELEASE"
+
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: "1.7.21"
+
+        implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "2.5"
+        implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: "2.5"
+        implementation group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: "2.5"
+
+        compileOnly 'org.projectlombok:lombok:1.18.16'
+        annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+}

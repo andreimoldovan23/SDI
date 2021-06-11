@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':sensors-app')
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.25'
+}

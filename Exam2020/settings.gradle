@@ -1,0 +1,6 @@
+rootProject.name = 'Exam2020'
+include 'sensors-app'
+include 'server-app'
+include 'core'
+include 'web'
+
